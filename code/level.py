@@ -1,8 +1,6 @@
 """Module controlling level"""
 
-from typing import Iterable
 import pygame
-from pygame.sprite import AbstractGroup
 from settings import *
 from tile import Tile
 from player import Player
@@ -14,8 +12,8 @@ class Level:
 
     def __init__(self) -> None:
         # sprite group setup
-        self.visible_sprites = YSortCameraGroup()
-        self.obstacles_sprites = pygame.sprite.Group()
+        self.visible_sprites: YSortCameraGroup = YSortCameraGroup()
+        self.obstacles_sprites: pygame.sprite.Group = pygame.sprite.Group()
 
         # spite setup
         self.create_map()
@@ -59,6 +57,6 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
 
-        for sprite in self.sprites():
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
