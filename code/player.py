@@ -41,7 +41,9 @@ class Player(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
 
         self.rect.x += self.direction.x * speed
+        self.collision("horizontal")
         self.rect.y += self.direction.y * speed
+        self.collision("vertical")
 
     def collision(self, direction) -> None:
         """Method controlling player collision"""
