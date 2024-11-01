@@ -1,9 +1,67 @@
+"""Module providing player control"""
+
 import pygame
 from settings import *
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups):
+    """Class controlling player"""
+
+    def __init__(self, pos, groups, obstacles_sprites) -> None:
         super().__init__(groups)
         self.image = pygame.image.load("../graphics/test/player.png").convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
+
+        self.direction = pygame.math.Vector2()
+        self.speed = 5
+
+        self.obstacles_sprites = obstacles_sprites
+
+    def input(self) -> None:
+        """Method of player input"""
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_UP]:
+            self.direction.y = -1
+        elif keys[pygame.K_DOWN]:
+            self.direction.y = 1
+        else:
+            self.direction.y = 0
+
+        if keys[pygame.K_RIGHT]:
+            self.direction.x = 1
+        elif keys[pygame.K_LEFT]:
+            self.direction.x = -1
+        else:
+            self.direction.x = 0
+
+    def move(self, speed) -> None:
+        """Method controlling player move"""
+        if self.direction.magnitude() != 0:
+            self.direction = self.direction.normalize()
+
+        self.rect.x += self.direction.x * speed
+        self.rect.y += self.direction.y * speed
+
+    def collision(self, direction) -> None:
+        """Method controlling player collision"""
+        if direction == "horizontal":
+            for sprite in self.obstacles_sprites:
+                if sprite.rect.colliderect(self.rect):
+                    if self.direction.x > 0:  # moving right
+                        self.rect.right = sprite.rect.left
+                    if self.direction.x < 0:  # moving left
+                        self.rect.left = sprite.rect.right
+
+        if direction == "vertical":
+            for sprite in self.obstacles_sprites:
+                if sprite.rect.colliderect(self.rect):
+                    if self.direction.y > 0:  # moving down
+                        self.rect.bottom = sprite.rect.top
+                    if self.direction.y < 0:  # moving up
+                        self.rect.top = sprite.rect.bottom
+
+    def update(self) -> None:
+        """Method updating player position"""
+        self.input()
+        self.move(self.speed)

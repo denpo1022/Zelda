@@ -1,9 +1,14 @@
-import pygame, sys
+"""The entry point of this game"""
+
+import sys
+import pygame
 from settings import *
 from level import Level
 
 
 class Game:
+    """Class that control game core"""
+
     def __init__(self) -> None:
         # general setup
         pygame.init()
@@ -14,6 +19,7 @@ class Game:
         self.level = Level()
 
     def run(self) -> None:
+        """Method controlling game process"""
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
